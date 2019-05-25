@@ -1,7 +1,6 @@
 import firebase from 'firebase/app';
 
 import auth from './components/auth';
-import birthday from './components/birthday';
 import nav from './components/nav-bar';
 import authData from './helpers/data/auth-data';
 
@@ -14,7 +13,6 @@ const init = () => {
   nav.navbarEvents();
   authData.checkLoginStatus();
   auth.initAuth();
-  birthday.initBirthday();
 };
 
 init();
