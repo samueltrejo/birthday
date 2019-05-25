@@ -10,10 +10,8 @@ const domStringBuilder = (birthday) => {
 };
 
 const initBirthday = (uid) => {
-  console.error(uid);
   birthdayData.getBirthdayByUid(uid)
     .then((response) => {
-      console.error(response);
       domStringBuilder(response);
     })
     .catch(error => console.error(error));
