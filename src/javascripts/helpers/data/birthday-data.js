@@ -4,7 +4,6 @@ import apiKeys from '../api-keys.json';
 const firebaseUrl = apiKeys.firebaseKeys.databaseURL;
 
 const getBirthdayByUid = uid => new Promise((resolve, reject) => {
-  console.error(uid);
   axios.get(`${firebaseUrl}/birthdays.json?orderBy="uid"&equalTo="${uid}"`)
     .then((results) => {
       const birthdayResults = results.data;
