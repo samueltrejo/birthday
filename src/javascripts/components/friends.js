@@ -3,6 +3,9 @@ import 'firebase/auth';
 import $ from 'jquery';
 import print from '../helpers/print';
 import friendsData from '../helpers/data/friends-data';
+import birthdayData from '../helpers/data/birthday-data';
+import rsvpData from '../helpers/data/rsvp-data';
+import smash from '../helpers/smash';
 
 const createNewFriend = (event) => {
   event.preventDefault();
@@ -85,7 +88,13 @@ const showFriends = (friends) => {
 const getFriends = (uid) => {
   friendsData.getFriendsByUid(uid)
     .then((friends) => {
-      showFriends(friends);
+      birthdayData.getBirthdayByUid(uid).then((birthday) => {
+        rsvpData.getRsvpsByBirthdayId(birthday.id).then((rsvps) => {
+          const finalFriends = smash.friendRsvps(friends, rsvps);
+          console.error(finalFriends);
+          showFriends(finalFriends);
+        });
+      });
     })
     .catch(error => console.error(error));
 };
