@@ -54,7 +54,6 @@ const radioButtonEvent = (event) => {
       .then(() => getFriends(firebase.auth().currentUser.uid)) // eslint-disable-line no-use-before-define
       .catch(error => console.error(error));
   }
-  console.error(rsvp, rsvpId);
 };
 
 const attachEvents = () => {
