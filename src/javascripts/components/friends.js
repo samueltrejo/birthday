@@ -3,6 +3,9 @@ import 'firebase/auth';
 import $ from 'jquery';
 import print from '../helpers/print';
 import friendsData from '../helpers/data/friends-data';
+import birthdayData from '../helpers/data/birthday-data';
+import rsvpData from '../helpers/data/rsvp-data';
+import smash from '../helpers/smash';
 
 const createNewFriend = (event) => {
   event.preventDefault();
@@ -60,16 +63,16 @@ const showFriends = (friends) => {
     domString += `<td>${friend.email}</td>`;
     domString += `<td id=${friend.rsvpId}>`;
     domString += '<div class="custom-control custom-radio custom-control-inline">';
-    domString += '<input type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input">';
-    domString += '<label class="custom-control-label" for="customRadioInline1">Toggle this custom radio</label>';
+    domString += `<input type="radio" id="radio1_${friend.id}" name="radios_${friend.id}" class="custom-control-input" ${friend.statusId === 'status2' ? 'checked' : ''}>`;
+    domString += `<label class="custom-control-label" for="radio1_${friend.id}">Yes</label>`;
     domString += '</div>';
     domString += '<div class="custom-control custom-radio custom-control-inline">';
-    domString += '<input type="radio" id="customRadioInline2" name="customRadioInline1" class="custom-control-input">';
-    domString += '<label class="custom-control-label" for="customRadioInline2">Or toggle this other custom radio</label>';
+    domString += `<input type="radio" id="radio2_${friend.id}" name="radios_${friend.id}" class="custom-control-input" ${friend.statusId === 'status3' ? 'checked' : ''}>`;
+    domString += `<label class="custom-control-label" for="radio2_${friend.id}">No</label>`;
     domString += '</div>';
     domString += '<div class="custom-control custom-radio custom-control-inline">';
-    domString += '<input type="radio" id="customRadioInline3" name="customRadioInline1" class="custom-control-input">';
-    domString += '<label class="custom-control-label" for="customRadioInline3">Or toggle this other custom radio</label>';
+    domString += `<input type="radio" id="radio3_${friend.id}" name="radios_${friend.id}" class="custom-control-input" ${friend.statusId === 'status1' ? 'checked' : ''}>`;
+    domString += `<label class="custom-control-label" for="radio3_${friend.id}">Unkown</label>`;
     domString += '</div>';
     domString += '</td>';
     domString += `<th scope="col"><button id=${friend.id} class="btn btn-danger delete-friend">X</button></th>`;
@@ -85,7 +88,12 @@ const showFriends = (friends) => {
 const getFriends = (uid) => {
   friendsData.getFriendsByUid(uid)
     .then((friends) => {
-      showFriends(friends);
+      birthdayData.getBirthdayByUid(uid).then((birthday) => {
+        rsvpData.getRsvpsByBirthdayId(birthday.id).then((rsvps) => {
+          const finalFriends = smash.friendRsvps(friends, rsvps);
+          showFriends(finalFriends);
+        });
+      });
     })
     .catch(error => console.error(error));
 };
