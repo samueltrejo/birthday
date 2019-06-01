@@ -38,16 +38,35 @@ const deleteFriend = (event) => {
     .catch(error => console.error(error));
 };
 
+const radioButtonEvent = (event) => {
+  const rsvpId = event.target.closest('td').id;
+  const rsvp = {
+    birthdayId: event.target.closest('table').id,
+    friendId: event.target.id.split('.')[1],
+    statusId: event.target.value,
+  };
+  if (rsvpId) {
+    rsvpData.editRsvp(rsvpId, rsvp)
+      .then(() => getFriends(firebase.auth().currentUser.uid)) // eslint-disable-line no-use-before-define
+      .catch(error => console.error(error));
+  } else {
+    rsvpData.addRsvp(rsvp)
+      .then(() => getFriends(firebase.auth().currentUser.uid)) // eslint-disable-line no-use-before-define
+      .catch(error => console.error(error));
+  }
+};
+
 const attachEvents = () => {
   document.getElementById('add-friend').addEventListener('click', newFriend);
   $('.delete-friend').click(deleteFriend);
+  $('.radio').click(radioButtonEvent);
 };
 
-const showFriends = (friends) => {
+const showFriends = (friends, birthdayId) => {
   let domString = '<div class="col-6 offset-3">';
   domString += '<h2>Friends</h2>';
   domString += '<button id="add-friend" class="btn btn-dark">Add Friend</button>';
-  domString += '<table class="table table-striped"';
+  domString += `<table id=${birthdayId} class="table table-striped"`;
   domString += '<thead>';
   domString += '<tr>';
   domString += '<th scope="col">Name</th>';
@@ -63,16 +82,16 @@ const showFriends = (friends) => {
     domString += `<td>${friend.email}</td>`;
     domString += `<td id=${friend.rsvpId}>`;
     domString += '<div class="custom-control custom-radio custom-control-inline">';
-    domString += `<input type="radio" id="radio1_${friend.id}" name="radios_${friend.id}" class="custom-control-input" ${friend.statusId === 'status2' ? 'checked' : ''}>`;
-    domString += `<label class="custom-control-label" for="radio1_${friend.id}">Yes</label>`;
+    domString += `<input type="radio" id="radio1.${friend.id}" name="radios.${friend.id}" class="custom-control-input radio" value="status2" ${friend.statusId === 'status2' ? 'checked' : ''}>`;
+    domString += `<label class="custom-control-label" for="radio1.${friend.id}">Yes</label>`;
     domString += '</div>';
     domString += '<div class="custom-control custom-radio custom-control-inline">';
-    domString += `<input type="radio" id="radio2_${friend.id}" name="radios_${friend.id}" class="custom-control-input" ${friend.statusId === 'status3' ? 'checked' : ''}>`;
-    domString += `<label class="custom-control-label" for="radio2_${friend.id}">No</label>`;
+    domString += `<input type="radio" id="radio2.${friend.id}" name="radios.${friend.id}" class="custom-control-input radio" value="status3" ${friend.statusId === 'status3' ? 'checked' : ''}>`;
+    domString += `<label class="custom-control-label" for="radio2.${friend.id}">No</label>`;
     domString += '</div>';
     domString += '<div class="custom-control custom-radio custom-control-inline">';
-    domString += `<input type="radio" id="radio3_${friend.id}" name="radios_${friend.id}" class="custom-control-input" ${friend.statusId === 'status1' ? 'checked' : ''}>`;
-    domString += `<label class="custom-control-label" for="radio3_${friend.id}">Unkown</label>`;
+    domString += `<input type="radio" id="radio3.${friend.id}" name="radios.${friend.id}" class="custom-control-input radio" value="status1" ${friend.statusId === 'status1' ? 'checked' : ''}>`;
+    domString += `<label class="custom-control-label" for="radio3.${friend.id}">Unkown</label>`;
     domString += '</div>';
     domString += '</td>';
     domString += `<th scope="col"><button id=${friend.id} class="btn btn-danger delete-friend">X</button></th>`;
@@ -91,7 +110,7 @@ const getFriends = (uid) => {
       birthdayData.getBirthdayByUid(uid).then((birthday) => {
         rsvpData.getRsvpsByBirthdayId(birthday.id).then((rsvps) => {
           const finalFriends = smash.friendRsvps(friends, rsvps);
-          showFriends(finalFriends);
+          showFriends(finalFriends, birthday.id);
         });
       });
     })
