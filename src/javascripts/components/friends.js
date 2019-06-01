@@ -63,15 +63,15 @@ const showFriends = (friends) => {
     domString += `<td>${friend.email}</td>`;
     domString += `<td id=${friend.rsvpId}>`;
     domString += '<div class="custom-control custom-radio custom-control-inline">';
-    domString += `<input type="radio" id="radio1_${friend.id}" name="radios_${friend.id}" class="custom-control-input">`;
+    domString += `<input type="radio" id="radio1_${friend.id}" name="radios_${friend.id}" class="custom-control-input" ${friend.statusId === 'status2' ? 'checked' : ''}>`;
     domString += `<label class="custom-control-label" for="radio1_${friend.id}">Yes</label>`;
     domString += '</div>';
     domString += '<div class="custom-control custom-radio custom-control-inline">';
-    domString += `<input type="radio" id="radio2_${friend.id}" name="radios_${friend.id}" class="custom-control-input">`;
+    domString += `<input type="radio" id="radio2_${friend.id}" name="radios_${friend.id}" class="custom-control-input" ${friend.statusId === 'status3' ? 'checked' : ''}>`;
     domString += `<label class="custom-control-label" for="radio2_${friend.id}">No</label>`;
     domString += '</div>';
     domString += '<div class="custom-control custom-radio custom-control-inline">';
-    domString += `<input type="radio" id="radio3_${friend.id}" name="radios_${friend.id}" class="custom-control-input">`;
+    domString += `<input type="radio" id="radio3_${friend.id}" name="radios_${friend.id}" class="custom-control-input" ${friend.statusId === 'status1' ? 'checked' : ''}>`;
     domString += `<label class="custom-control-label" for="radio3_${friend.id}">Unkown</label>`;
     domString += '</div>';
     domString += '</td>';
@@ -91,7 +91,6 @@ const getFriends = (uid) => {
       birthdayData.getBirthdayByUid(uid).then((birthday) => {
         rsvpData.getRsvpsByBirthdayId(birthday.id).then((rsvps) => {
           const finalFriends = smash.friendRsvps(friends, rsvps);
-          console.error(finalFriends);
           showFriends(finalFriends);
         });
       });
